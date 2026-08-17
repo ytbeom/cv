@@ -81,23 +81,27 @@ Software Engineer building the backend of generative AI search services. Experie
 
 ### Seoul National University
 
-- Location: Seoul, South Korea
 - Period: 2015.09 - 2022.02
-- Degree: M.S. in Industrial Engineering
+- Position: M.S. in Industrial Engineering
+
+* Seoul, South Korea
 
 ### POSTECH
 
-- Location: Pohang, South Korea
 - Period: 2010.03 - 2015.02
-- Degree: B.S. in Industrial & Management Engineering / Computer Science (Double Major)
+- Position: B.S. in Industrial & Management Engineering / Computer Science (Double Major)
+
+* Pohang, South Korea
 
 ## Research
 
 ### Quality of Life Technology Lab, Seoul National University
 
+- Position: Integrated M.S./Ph.D. Program
+
 * Conducted research on user behavior analysis and user-centered interface/system design based on Human Factors
 
-### Selected Publications
+#### Selected Publications
 
 * Mode Displaying Mouse Cursors for Reducing Input Language Mode Confusion: Utility and User Attitude Evaluation - First Author, Applied Ergonomics, 2021
 * A Reach Motion Generation Algorithm Based on Posture Memories - First Author, WORK, 2020

@@ -88,23 +88,27 @@
 
 ### 서울대학교
 
-- 위치: 서울, 대한민국
 - 기간: 2015.09 – 2022.02
-- 학위: 산업공학 석사
+- 직책: 산업공학 석사
+
+* 서울, 대한민국
 
 ### POSTECH
 
-- 위치: 포항, 대한민국
 - 기간: 2010.03 – 2015.02
-- 학위: 산업경영공학 / 컴퓨터공학 학사 (복수전공)
+- 직책: 산업경영공학 / 컴퓨터공학 학사 (복수전공)
+
+* 포항, 대한민국
 
 ## 연구 경험
 
 ### 서울대학교 삶향상기술연구실
 
+- 직책: 석박사통합과정
+
 * 인간공학(Human Factors) 기반의 사용자 행동 분석 및 사용자 중심 인터페이스·시스템 설계 연구 수행
 
-### 주요 논문
+#### 주요 논문
 
 * Mode Displaying Mouse Cursors for Reducing Input Language Mode Confusion: Utility and User Attitude Evaluation - 제1저자, Applied Ergonomics, 2021
 * A Reach Motion Generation Algorithm Based on Posture Memories - 제1저자, WORK, 2020

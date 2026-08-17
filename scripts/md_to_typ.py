@@ -38,7 +38,7 @@ LANG_CONFIG = {
         "md": ROOT / "cv_ko.md",
         "typ": ROOT / "cv_ko.typ",
         "template": "templates/linked-cv-ko/lib.typ",
-        "sections": {"경력": "career", "학력": "education"},
+        "sections": {"경력": "career", "학력": "career", "연구 경험": "career"},
         "meta_aliases": {
             "직함": "title", "전화": "phone", "이메일": "email",
             "기간": "period", "직책": "position", "기술": "tech",
@@ -52,7 +52,7 @@ LANG_CONFIG = {
         "md": ROOT / "cv_en.md",
         "typ": ROOT / "cv_en.typ",
         "template": "templates/linked-cv/lib.typ",
-        "sections": {"Experience": "career", "Education": "education"},
+        "sections": {"Experience": "career", "Education": "career", "Research": "career"},
         "meta_aliases": {
             "title": "title", "phone": "phone", "email": "email",
             "period": "period", "position": "position", "tech": "tech",
@@ -254,27 +254,6 @@ def parse_career(section_lines, cfg):
     return companies
 
 
-def parse_education(section_lines, cfg):
-    entries = []
-    for school, body in split_by_heading(section_lines, 3):
-        meta, _ = parse_block(body, cfg)
-        entries.append({
-            "school": school,
-            "location": meta.get("location", ""),
-            "period": meta.get("period", ""),
-            "degree": meta.get("degree", ""),
-        })
-    return entries
-
-
-def parse_freeform(section_lines, cfg):
-    blocks = []
-    for title, body in split_by_heading(section_lines, 3):
-        _, bullets = parse_block(body, cfg)
-        blocks.append({"title": title, "bullets": bullets})
-    return blocks
-
-
 # ---- typst 코드 생성 ----
 
 def gen_header(h, cfg):
@@ -296,7 +275,7 @@ def gen_header(h, cfg):
     out.append("  socials: (")
     out.append("\n".join(socials_lines))
     out.append("  ),")
-    out.append('  fonts: (headings: "NanumGothic", body: "NanumGothic"),')
+    out.append('  fonts: (headings: "Pretendard", body: "Pretendard"),')
     out.append(")\n")
     out.append("#set text(size: 8pt, hyphenate: false)")
     out.append("#set par(justify: true, leading: 0.52em)\n")
@@ -338,13 +317,16 @@ def gen_career(companies, section_title, cfg):
     out = [f'#components.section("{convert_inline(section_title)}")\n']
     for idx, c in enumerate(companies):
         cid = re.sub(r"[^a-zA-Z0-9]", "", c["company"]).lower() or f"company{idx}"
-        out.append("#components.employer-info(")
-        out.append("  none,")
-        out.append(f'  name: "{convert_inline(c["company"])}",')
         if c["period"]:
             s, e = duration_tuple(c["period"], cfg)
+            out.append("#components.employer-info(")
+            out.append("  none,")
+            out.append(f'  name: "{convert_inline(c["company"])}",')
             out.append(f'  duration: ("{s}", "{e}"),')
-        out.append(")\n")
+            out.append(")\n")
+        else:
+            out.append(f'#typography.subsection[{convert_inline(c["company"])}]')
+            out.append("")
         out.append(f'#frame.connected-frames(\n  "{cid}",')
         out.append("  (")
         out.append(f'    title: [{convert_inline(c["position"] or c["company"])}],')
@@ -364,30 +346,9 @@ def gen_career(companies, section_title, cfg):
     return "\n".join(out)
 
 
-def gen_education(entries, section_title):
-    out = [f'#components.section("{convert_inline(section_title)}")\n']
-    out.append("#grid(")
-    out.append("  columns: (2fr, 1fr, 1fr, 2fr),")
-    out.append("  gutter: 0.5em,")
-    for e in entries:
-        out.append("  ..components.qualification(")
-        out.append(f'    "{convert_inline(e["degree"])}",')
-        out.append('    "",')
-        out.append(f'    "{convert_inline(e["period"])}",')
-        out.append(f'    "{convert_inline(e["school"])}"')
-        out.append("  ),")
-    out.append(")\n")
-    return "\n".join(out)
-
-
-def gen_freeform(section_title, blocks):
-    out = [f'#components.section("{convert_inline(section_title)}")\n']
-    for b in blocks:
-        out.append(f"#typography.subsection[{convert_inline(b['title'])}]")
-        for bullet in b["bullets"]:
-            out.append(f"- {convert_inline(bullet)}")
-        out.append("")
-    return "\n".join(out)
+def gen_section(section_lines, section_title, cfg):
+    """모든 ## 섹션을 동일한 구조로 파싱+렌더링."""
+    return gen_career(parse_career(section_lines, cfg), section_title, cfg)
 
 
 def main():
@@ -404,13 +365,7 @@ def main():
 
     parts = [gen_header(header, cfg)]
     for title, body in sections:
-        section_type = cfg["sections"].get(title)
-        if section_type == "career":
-            parts.append(gen_career(parse_career(body, cfg), title, cfg))
-        elif section_type == "education":
-            parts.append(gen_education(parse_education(body, cfg), title))
-        else:
-            parts.append(gen_freeform(title, parse_freeform(body, cfg)))
+        parts.append(gen_section(body, title, cfg))
 
     cfg["typ"].write_text("\n".join(parts), encoding="utf-8")
     print(f"[{lang}] Wrote {cfg['typ']}")
