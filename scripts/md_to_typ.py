@@ -296,7 +296,7 @@ def gen_header(h, cfg):
     out.append("  socials: (")
     out.append("\n".join(socials_lines))
     out.append("  ),")
-    out.append('  fonts: (headings: "NanumBarunGothic", body: "NanumBarunGothic"),')
+    out.append('  fonts: (headings: "NanumGothic", body: "NanumGothic"),')
     out.append(")\n")
     out.append("#set text(size: 8pt, hyphenate: false)")
     out.append("#set par(justify: true, leading: 0.52em)\n")
