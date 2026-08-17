@@ -17,7 +17,7 @@
     str(end-date.at(1)) + "." + pad2(end-date.at(0))
   }
 
-  start-str + " — " + end-str
+  start-str + " - " + end-str
 }
 
 #let timeline-frame(

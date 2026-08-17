@@ -19,7 +19,7 @@
     str(end-month) + " " + str(end-date.at(1))
   }
 
-  start-month + " " + start-year + " — " + end-str
+  start-month + " " + start-year + " - " + end-str
 }
 
 #let timeline-frame(

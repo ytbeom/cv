@@ -1,6 +1,7 @@
 #import "colours.typ": colours, get-accent-colour
 #import "typography.typ"
 #import "utils.typ": *
+#import "frame.typ": format-duration
 #import "tech-icons.typ": tech-icon, tech-icons
 #import "timeline-state.typ": *
 
@@ -36,7 +37,7 @@
       items.push(link("https://github.com/" + github)[#github])
     }
     if linkedin != none {
-      items.push(link("https://www.linkedin.com/in/" + linkedin)[#linkedin])
+      items.push(link("https://www.linkedin.com/in/" + linkedin)[LinkedIn])
     }
 
     items.join("   |   ")
@@ -47,20 +48,11 @@
   context {
     v(0.5em)
 
-    let title-str = if type(title) == str { title } else { str(title) }
-    let first-three = title-str.slice(0, calc.min(3, title-str.len()))
-    let rest = if title-str.len() > 3 { title-str.slice(3) } else { "" }
-    let accent = get-accent-colour()
-
-    let colored-title = [
-      #text(fill: accent)[#first-three]#text(fill: black)[#rest]
-    ]
-
     grid(
       columns: (auto, 1fr),
       column-gutter: 0.5em,
       align: (left, bottom),
-      typography.section(colored-title),
+      typography.section(text(fill: black)[#title]),
       place(dy: 1.25em, line(length: 100%, stroke: 0.9pt + colours.gray)),
     )
     v(0em)
@@ -97,7 +89,7 @@
         {
           typography.org(name)
           linebreak()
-          typography.duration(time-in-company(..duration))
+          typography.duration(format-duration(duration.at(0), duration.at(1)))
         }
         )
     )

@@ -6,9 +6,9 @@
   lightgray: rgb("#999999"),
 
   darktext: rgb("#111111"),
-  text: rgb("#555555"),
-  graytext: rgb("#999999"),
-  lighttext: rgb("#BBBBBB"),
+  text: rgb("#333333"),
+  graytext: rgb("#666666"),
+  lighttext: rgb("#888888"),
 
   lightbackground: rgb("#EEEEEE"),
   darkbackground: rgb("#CCCCCC"),

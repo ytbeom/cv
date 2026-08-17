@@ -31,7 +31,7 @@
 }
 
 #let social-entry(content) = text(
-  size: 6.8pt,
+  size: 8.5pt,
   fill: colours.text,
   content
 )

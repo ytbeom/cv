@@ -17,6 +17,7 @@ md 규칙:
 
   ## 경력/Experience
   ### 회사명
+  - 로고/Logo: ...
   - 기간/Period: ...
   - 직책/Position: ...
   #### 프로젝트명
@@ -42,7 +43,7 @@ LANG_CONFIG = {
         "meta_aliases": {
             "직함": "title", "전화": "phone", "이메일": "email",
             "기간": "period", "직책": "position", "기술": "tech",
-            "위치": "location", "학위": "degree",
+            "위치": "location", "학위": "degree", "로고": "logo",
         },
         "section_career": "경력",
         "section_education": "학력",
@@ -56,7 +57,7 @@ LANG_CONFIG = {
         "meta_aliases": {
             "title": "title", "phone": "phone", "email": "email",
             "period": "period", "position": "position", "tech": "tech",
-            "location": "location", "degree": "degree",
+            "location": "location", "degree": "degree", "logo": "logo",
         },
         "section_career": "Experience",
         "section_education": "Education",
@@ -65,7 +66,7 @@ LANG_CONFIG = {
 }
 
 # 모든 언어에서 공통으로 인식하는 메타 키 (정규화 후의 키)
-NORMALIZED_META_KEYS = {"title", "phone", "email", "period", "position", "tech", "location", "degree"}
+NORMALIZED_META_KEYS = {"title", "phone", "email", "period", "position", "tech", "location", "degree", "logo"}
 
 ICON_ALIASES = {
     "python": "python", "fastapi": "fastapi", "react": "react",
@@ -77,6 +78,10 @@ ICON_ALIASES = {
     "graphql": "graphql", "nginx": "nginx", "rust": "rust",
     "aws": "aws", "azure": "azure", "gcp": "googlecloud",
     "terraform": "terraform", "jenkins": "jenkins",
+    "langgraph": "langgraph", "kafka": "kafka",
+    "scala": "scala", "spark": "spark", "airflow": "airflow",
+    "kotlin": "kotlin", "spring": "spring", "springboot": "spring",
+    "java": "java",
 }
 
 META_BULLET_RE = re.compile(r"^[-*]\s*([^:：]+)\s*[:：]\s*(.+)$")
@@ -101,7 +106,7 @@ def convert_inline(text: str) -> str:
 def matched_icons(tech_str):
     if not tech_str:
         return []
-    items = [t.strip() for t in re.split(r"[,\uff0c]", tech_str) if t.strip()]
+    items = [t.strip() for t in re.split(r"[,，]", tech_str) if t.strip()]
     icons = []
     for item in items:
         key = re.sub(r"\s+", "", item).lower()
@@ -127,14 +132,14 @@ def duration_tuple(period, cfg):
     return start, end
 
 
-def split_name(name):
+def split_name(name, lang="en"):
     name = name.strip()
     if len(name) <= 1:
         return name, ""
-    # 한글 이름(성 1자 + 이름)인지 판별
-    if re.match(r"^[\uac00-\ud7a3]+$", name) and len(name) >= 2:
-        return name[1:], name[0]  # firstname(이름), lastname(성)
-    # 영문 이름: "First Last"
+    if re.match(r"^[가-힣]+$", name) and len(name) >= 2:
+        if lang == "ko":
+            return name[0], name[1:]
+        return name[1:], name[0]
     parts = name.rsplit(" ", 1)
     if len(parts) == 2:
         return parts[0], parts[1]
@@ -248,6 +253,7 @@ def parse_career(section_lines, cfg):
             "company": company,
             "period": meta.get("period", ""),
             "position": meta.get("position", ""),
+            "logo": meta.get("logo", ""),
             "projects": projects,
             "direct_bullets": direct_bullets,
         })
@@ -256,8 +262,8 @@ def parse_career(section_lines, cfg):
 
 # ---- typst 코드 생성 ----
 
-def gen_header(h, cfg):
-    firstname, lastname = split_name(h["name"])
+def gen_header(h, cfg, lang="en"):
+    firstname, lastname = split_name(h["name"], lang=lang)
     socials_lines = []
     if h["email"]:
         socials_lines.append(f'    email: "{h["email"]}",')
@@ -307,7 +313,7 @@ def gen_project_block(title, period, bullets, tech):
         lines.append(f"      - {convert_inline(b)}")
     if tech:
         lines.append(
-            f'      #text(style: "italic", size: 7.5pt, fill: gray)[{convert_inline(tech)}]'
+            f'      #text(style: "italic", size: 7.5pt, fill: colours.gray)[{convert_inline(tech)}]'
         )
     lines.append("      #v(0.6em)")
     return "\n".join(lines)
@@ -319,8 +325,12 @@ def gen_career(companies, section_title, cfg):
         cid = re.sub(r"[^a-zA-Z0-9]", "", c["company"]).lower() or f"company{idx}"
         if c["period"]:
             s, e = duration_tuple(c["period"], cfg)
+            if c["logo"]:
+                logo_arg = f'  image("images/{c["logo"]}", width: 2.5em),'
+            else:
+                logo_arg = "  none,"
             out.append("#components.employer-info(")
-            out.append("  none,")
+            out.append(logo_arg)
             out.append(f'  name: "{convert_inline(c["company"])}",')
             out.append(f'  duration: ("{s}", "{e}"),')
             out.append(")\n")
@@ -347,7 +357,6 @@ def gen_career(companies, section_title, cfg):
 
 
 def gen_section(section_lines, section_title, cfg):
-    """모든 ## 섹션을 동일한 구조로 파싱+렌더링."""
     return gen_career(parse_career(section_lines, cfg), section_title, cfg)
 
 
@@ -363,7 +372,7 @@ def main():
     header_lines, sections = split_top(lines)
     header = parse_header(header_lines, cfg)
 
-    parts = [gen_header(header, cfg)]
+    parts = [gen_header(header, cfg, lang=lang)]
     for title, body in sections:
         parts.append(gen_section(body, title, cfg))
 

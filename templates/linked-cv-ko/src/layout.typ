@@ -17,7 +17,7 @@
     footer: context [
       #set align(center)
       #typography.footer[
-        #firstname #lastname · 이력서
+        #firstname#lastname · 이력서
         #h(1fr)
         #counter(page).display("1")
       ]

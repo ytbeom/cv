@@ -6,7 +6,7 @@ mkdir -p "$ROOT_DIR/pdf"
 
 for lang in ko en; do
   echo "[$lang] Converting cv_${lang}.md → cv_${lang}.typ"
-  python3 "$ROOT_DIR/scripts/md_to_typ.py" "$lang"
+  python "$ROOT_DIR/scripts/md_to_typ.py" "$lang"
 
   echo "[$lang] Compiling cv_${lang}.typ → pdf/cv_${lang}.pdf"
   MSYS_NO_PATHCONV=1 docker run --rm \
