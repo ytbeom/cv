@@ -1,0 +1,79 @@
+name: Build CV and deploy to Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cv_ko.md"
+      - "cv_en.md"
+      - "scripts/md_to_typ.py"
+      - "templates/**"
+      - "fonts/**"
+      - "site/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Convert and compile (ko)
+        run: |
+          mkdir -p pdf
+          python3 scripts/md_to_typ.py ko
+          docker run --rm \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            --entrypoint typst \
+            pandoc/typst:latest \
+            compile cv_ko.typ pdf/cv_ko.pdf --font-path fonts
+
+      - name: Convert and compile (en)
+        run: |
+          python3 scripts/md_to_typ.py en
+          docker run --rm \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            --entrypoint typst \
+            pandoc/typst:latest \
+            compile cv_en.typ pdf/cv_en.pdf --font-path fonts
+
+      - name: Assemble Pages site
+        run: |
+          mkdir -p _site
+          cp site/index.html _site/index.html
+          cp pdf/cv_ko.pdf _site/cv_ko.pdf
+          cp pdf/cv_en.pdf _site/cv_en.pdf
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
