@@ -44,6 +44,7 @@ LANG_CONFIG = {
             "직함": "title", "전화": "phone", "이메일": "email",
             "기간": "period", "직책": "position", "기술": "tech",
             "위치": "location", "학위": "degree", "로고": "logo",
+            "페이지나누기": "pagebreak",
         },
         "section_career": "경력",
         "section_education": "학력",
@@ -58,6 +59,7 @@ LANG_CONFIG = {
             "title": "title", "phone": "phone", "email": "email",
             "period": "period", "position": "position", "tech": "tech",
             "location": "location", "degree": "degree", "logo": "logo",
+            "pagebreak": "pagebreak",
         },
         "section_career": "Experience",
         "section_education": "Education",
@@ -66,7 +68,7 @@ LANG_CONFIG = {
 }
 
 # 모든 언어에서 공통으로 인식하는 메타 키 (정규화 후의 키)
-NORMALIZED_META_KEYS = {"title", "phone", "email", "period", "position", "tech", "location", "degree", "logo"}
+NORMALIZED_META_KEYS = {"title", "phone", "email", "period", "position", "tech", "location", "degree", "logo", "pagebreak"}
 
 ICON_ALIASES = {
     "python": "python", "fastapi": "fastapi", "react": "react",
@@ -254,6 +256,7 @@ def parse_career(section_lines, cfg):
             "period": meta.get("period", ""),
             "position": meta.get("position", ""),
             "logo": meta.get("logo", ""),
+            "pagebreak": meta.get("pagebreak", "").lower() in ("true", "yes", "1"),
             "projects": projects,
             "direct_bullets": direct_bullets,
         })
@@ -322,6 +325,8 @@ def gen_project_block(title, period, bullets, tech):
 def gen_career(companies, section_title, cfg):
     out = [f'#components.section("{convert_inline(section_title)}")\n']
     for idx, c in enumerate(companies):
+        if c.get("pagebreak"):
+            out.append("#pagebreak()\n")
         cid = re.sub(r"[^a-zA-Z0-9]", "", c["company"]).lower() or f"company{idx}"
         if c["period"]:
             s, e = duration_tuple(c["period"], cfg)

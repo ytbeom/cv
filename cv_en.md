@@ -22,8 +22,7 @@ Software Engineer building the backend of generative AI search services. Experie
 
 * Designed and built the serving backend for a conversational AI search service from scratch
 * Implemented the full pipeline from preprocessing (query analysis, search result collection, multi-turn context retrieval) to LangGraph-based AI agent execution and SSE streaming
-* Defined interfaces and coordinated changes across multiple team boundaries including LangGraph, model, gateway, and frontend
-* Operated a service handling avg 30 QPS (peak 50 QPS) across 100 pods, designing Grafana/Prometheus-based operational metrics
+* Operated a service handling avg 30 QPS (peak 50 QPS), designing Grafana/Prometheus-based operational metrics
 
 #### AI Briefing
 
@@ -41,8 +40,8 @@ Software Engineer building the backend of generative AI search services. Experie
 - Tech: Scala, Spark, Python, React
 
 * Maintained Scala Spark-based ETL pipeline generating ~1B video search index records
-* Integrated new video sources (Weverse, etc.) with source-specific metadata and indexing policies
-* Added YouTube chapter data to search index to support key scene navigation, and built search quality evaluation tools for comparative analysis of relevance and timeliness against competitors
+* Added YouTube chapter data to search index to support key scene navigation
+* Built search quality evaluation tools for comparative analysis against competitors' search results
 
 #### Key Moments
 
@@ -69,6 +68,7 @@ Software Engineer building the backend of generative AI search services. Experie
 ### Tmax
 
 - Logo: tmax.png
+- Pagebreak: true
 - Period: 2019.02 - 2021.04
 - Position: Software Engineer
 
